@@ -88,8 +88,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>首先从机器学习的基本概念说起。</p>
-<p>###经验风险（Experiencal Risk)</p>
-<p><strong>机器学习本质上是一种对问题真实模型的逼近</strong>，这种近似模型也叫作一个假设。假设肯定与真实模型之间存在有误差，这种误差或者误差的积累也被称为“风险”(risk)。</p>
+<h3 id="u7ECF_u9A8C_u98CE_u9669_uFF08Experiencal_Risk_29"><a href="#u7ECF_u9A8C_u98CE_u9669_uFF08Experiencal_Risk_29" class="headerlink" title="经验风险（Experiencal Risk)"></a>经验风险（Experiencal Risk)</h3><p><strong>机器学习本质上是一种对问题真实模型的逼近</strong>，这种近似模型也叫作一个假设。假设肯定与真实模型之间存在有误差，这种误差或者误差的积累也被称为“风险”(risk)。</p>
 <p>在我们选择了一个假设后，为了得到真实误差的逼近，我们用<strong>模型在样本数据上的分类结果与样本本身真实结果之间的差值</strong>来表示。这个差值叫做<strong>经验风险</strong>。</p>
 <p>经验风险并不能很好的体现模型的优劣，因为很多分类函数在样本集合上能够很轻易的获得很高正确率,但是对真实数据的预测却很糟。也表明了这种模型的推广能力（泛化能力）差。</p>
 <p>导致这种现象的原因是：经验风险并不能够真正的逼近真实风险,因为样本集合的数目相对于真实世界的数据来说始终是很小的。之后统计学中就引入了泛化误差界的概念。</p>
@@ -97,26 +96,23 @@
 <p>真实的风险应该由两部分组成：</p>
 <p>1：经验风险,代表分类器在给定样本上的误差（可以精确计算）。     </p>
 <p>2：置信风险,代表我们可以在多大程度上信任分类器在未知数据上的分类结果（不可以精确计算）,因为不可以精确计算,所以只能给出一个估计区间,也因为这个泛化误差只能给出一个上界。 与置信风险相关的变量有两个：</p>
-<pre><code>a)样本数量,样本数量越大表明我们的学习结果正确的可能性越大,此时置信风险越小。
-
-b)VC维,分类函数的VC维越大,推广能力越差,置信风险越大。
-</code></pre><p>真实风险 ≤ 经验风险 + 置信风险。</p>
+<p>a)样本数量,样本数量越大表明我们的学习结果正确的可能性越大,此时置信风险越小。</p>
+<p>b)VC维,分类函数的VC维越大,推广能力越差,置信风险越大。</p>
+<p>真实风险 ≤ 经验风险 + 置信风险。</p>
 <p>现在统计学习的目标就从经验风险最小化变为经验风险与置信风险之和最小化。</p>
-<p>##Bias, Variance</p>
-<p>在A Few Useful Thingsto Know about Machine Learning中提到，可以将泛化误差（gener-alization error）分解成bias和variance理解。</p>
-<p>Bias: a learner’s tendency to consistently learn the same wrong thing，即度量了某种学习算法的平均估计结果所能逼近学习目标(目标输出)的程度。简单来说，bias代表了模型预测与结果的误差。</p>
-<p>Variance：the tendency to learn random things irrespective of the real signal，即度量了在面对同样规模的不同训练集时，学习算法的估计结果发生变动的程度。简单说，variance代表了模型对于训练数据的敏感性。</p>
+<h2 id="Bias_2C_Variance"><a href="#Bias_2C_Variance" class="headerlink" title="Bias, Variance"></a>Bias, Variance</h2><p>在A Few Useful Thingsto Know about Machine Learning中提到，可以将泛化误差（gener-alization error）分解成bias和variance理解。</p>
+<p><strong>Bias</strong>: a learner’s tendency to consistently learn the same wrong thing，即度量了某种学习算法的平均估计结果所能逼近学习目标(目标输出)的程度。简单来说，bias代表了模型预测与结果的误差。</p>
+<p><strong>Variance</strong>：the tendency to learn random things irrespective of the real signal，即度量了在面对同样规模的不同训练集时，学习算法的估计结果发生变动的程度。简单说，variance代表了模型对于训练数据的敏感性。</p>
 <p>可以用下面这个图来阐述两者的概念。</p>
 <p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/Bias_Variance.jpg" alt="Bias and Variance"></p>
 <p>靶心为某个能完美预测的模型，离靶心越远则准确率越低。靶上的点代表某次对某个数据集上学习某个模型。从图上可以看出，高的bias表示预测离目标较远，低bias表示离靶心越近；高的variance表示在不同训练集上的多次学习结果越分散，反之越集中。</p>
 <p>同样我们可以看出，高的bias或者高的variance都会让一个模型偏离目标很多。一般来说，关于bias和variance都会有一个tradeoff，即，有高bias的模型可以达到比较低的variance，有低的bias的模型会带来比较高的variance。</p>
-<p>##Overfitting and underfitting</p>
-<p>无论是高的bias还是高的variance对于模型都是不好的性质。当我们的模型有high bias的时候，我们称它“underfits”数据；当我们的模型有high variance和low bias的时候，我们称它”overfits”数据。</p>
+<h2 id="Overfitting_and_underfitting"><a href="#Overfitting_and_underfitting" class="headerlink" title="Overfitting and underfitting"></a>Overfitting and underfitting</h2><p>无论是高的bias还是高的variance对于模型都是不好的性质。当我们的模型有high bias的时候，我们称它“underfits”数据；当我们的模型有high variance和low bias的时候，我们称它”overfits”数据。</p>
 <p>我们在这一章将会解释一下为什么会如此。</p>
 <p>假设我们有一组训练数据有n个数据对 (x1, y1), (x2, y2), …. (xn, yn). 我们的目标是选择一个方程来在给到x的情况下预测y的值。所以我们希望找到一个方程f(x)逼近训练数据(我们希望误差 | f(xi) – yi | 对于每个训练集数据对都比较小)。这种学习问题被称为回归(regression)。</p>
 <p>回归问题和分类问题不同。分类问题中，我们只希望去预测一个离散的标签。在回归问题中，我们希望预测一个值(y)。Overfitting和Underfitting问题同样适用于分类问题，但是在回归问题中比较容易视觉化这个case。</p>
 <p>假设我们想用某个阶的多项式来表示f(x)。假设我们选择了d阶多项式，那我们有一组可能的模型去选择，可以用下面的形式来表示这组模型，其中，a_i是不同项的参数。</p>
-<p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/equation%20(1" alt="equation1">.png)</p>
+<p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/equation%20(1).png" alt=""></p>
 <p>阶数越高，表达式越复杂。一阶多项式可以用一条直线表示，而阶多项式是抛物线，等等。</p>
 <p>我们用三个不同阶数的模型来拟合我们的数据集：一阶多项式，二阶多项式和五阶多项式。分别如下图所示：</p>
 <p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/1degree_4degree.png" alt="equation2"></p>
@@ -128,14 +124,13 @@ b)VC维,分类函数的VC维越大,推广能力越差,置信风险越大。
 <p>Overfitting在机器学习中往往是一个比underfitting更重要的问题。经常是在数据中有噪声（小的，随机的错误）的情况下，过拟合数据会导致模型拟合了噪声。有低variance的模型在有噪声的数据上会更加鲁邦。</p>
 <p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/goodfit_overfitting.png" alt="goodfits-overfitting"></p>
 <p>在上面的图中，右边的模型拟合了数据集中的噪声，左边的模型对于噪声比较鲁邦。</p>
-<p>##我们如何知道是否过拟合了数据？</p>
-<p>我们选择越复杂的模型，在数据集上的误差会越小。正如上面的例子，我们选择足够复杂的模型后，在训练集上的误差可以达到零。</p>
-<p>有一些方法可以减少过拟合，我们以后的课程再探讨~</p>
+<h2 id="u6211_u4EEC_u5982_u4F55_u77E5_u9053_u662F_u5426_u8FC7_u62DF_u5408_u4E86_u6570_u636E_uFF1F"><a href="#u6211_u4EEC_u5982_u4F55_u77E5_u9053_u662F_u5426_u8FC7_u62DF_u5408_u4E86_u6570_u636E_uFF1F" class="headerlink" title="我们如何知道是否过拟合了数据？"></a>我们如何知道是否过拟合了数据？</h2><p>我们选择越复杂的模型，在数据集上的误差会越小。正如上面的例子，我们选择足够复杂的模型后，在训练集上的误差可以达到零。</p>
+<p>有一些方法可以减少过拟合，我们以后的章节再探讨~</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/19/ml-lr-vias-variance/" data-id="ciifd3sh10003m0s5vzkkln2g" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/19/ml-lr-vias-variance/" data-id="ciifdjmaf00033ss5huxhe4uj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/机器学习，-逻辑回归，-bias-variance/">机器学习， 逻辑回归， bias, variance</a></li></ul>
@@ -234,7 +229,7 @@ b)VC维,分类函数的VC维越大,推广能力越差,置信风险越大。
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/14/my-new-post/" data-id="ciifd3sgl0000m0s5ij9eu2v0" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/14/my-new-post/" data-id="ciifdjm9y00003ss5jr3bn9gg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ror-mongoid-rails-api/">ror, mongoid, rails api</a></li></ul>
