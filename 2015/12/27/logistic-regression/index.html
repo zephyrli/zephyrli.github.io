@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>逻辑回归 | Zephyr&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="分类问题例如：Email: 是垃圾邮件 / 不是垃圾邮件?在线交易: 欺诈网站 (是 / 不是)?肿瘤: 恶性 / 良性 ?这些是比较典型的二分类问题，也就是说结果可以表示为y，$y \in {0, 1} $0: “Negative Class” (e.g., 良性肿瘤)1: “Positive Class” (e.g., 恶性肿瘤)
+线性回归、逻辑回归与分类问题使用Andrew NG讲义中的图，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逻辑回归">
+<meta property="og:url" content="http://yoursite.com/2015/12/27/logistic-regression/index.html">
+<meta property="og:site_name" content="Zephyr's blog">
+<meta property="og:description" content="分类问题例如：Email: 是垃圾邮件 / 不是垃圾邮件?在线交易: 欺诈网站 (是 / 不是)?肿瘤: 恶性 / 良性 ?这些是比较典型的二分类问题，也就是说结果可以表示为y，$y \in {0, 1} $0: “Negative Class” (e.g., 良性肿瘤)1: “Positive Class” (e.g., 恶性肿瘤)
+线性回归、逻辑回归与分类问题使用Andrew NG讲义中的图，">
+<meta property="og:image" content="https://raw.githubusercontent.com/zephyrli/pics/master/lr1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zephyrli/pics/master/lr2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zephyrli/pics/master/lr3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zephyrli/pics/master/lr4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zephyrli/pics/master/lr5_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zephyrli/pics/master/lr6.png">
+<meta property="og:updated_time" content="2015-12-28T02:43:46.421Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="逻辑回归">
+<meta name="twitter:description" content="分类问题例如：Email: 是垃圾邮件 / 不是垃圾邮件?在线交易: 欺诈网站 (是 / 不是)?肿瘤: 恶性 / 良性 ?这些是比较典型的二分类问题，也就是说结果可以表示为y，$y \in {0, 1} $0: “Negative Class” (e.g., 良性肿瘤)1: “Positive Class” (e.g., 恶性肿瘤)
+线性回归、逻辑回归与分类问题使用Andrew NG讲义中的图，">
+  
+    <link rel="alternative" href="/atom.xml" title="Zephyr&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Zephyr&#39;s blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Don&#39;t stop to be stronger</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-logistic-regression" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/27/logistic-regression/" class="article-date">
+  <time datetime="2015-12-27T10:07:17.000Z" itemprop="datePublished">2015-12-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      逻辑回归
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="u5206_u7C7B_u95EE_u9898"><a href="#u5206_u7C7B_u95EE_u9898" class="headerlink" title="分类问题"></a>分类问题</h2><p>例如：<br>Email: 是垃圾邮件 / 不是垃圾邮件?<br>在线交易: 欺诈网站 (是 / 不是)?<br>肿瘤: 恶性 / 良性 ?<br>这些是比较典型的二分类问题，也就是说结果可以表示为y，$y \in {0, 1} $<br>0: “Negative Class” (e.g., 良性肿瘤)<br>1: “Positive Class” (e.g., 恶性肿瘤)</p>
+<h3 id="u7EBF_u6027_u56DE_u5F52_u3001_u903B_u8F91_u56DE_u5F52_u4E0E_u5206_u7C7B_u95EE_u9898"><a href="#u7EBF_u6027_u56DE_u5F52_u3001_u903B_u8F91_u56DE_u5F52_u4E0E_u5206_u7C7B_u95EE_u9898" class="headerlink" title="线性回归、逻辑回归与分类问题"></a>线性回归、逻辑回归与分类问题</h3><p>使用Andrew NG讲义中的图，红色X表示的样本对，横坐标表示肿瘤的大小，纵坐标为观测值是否为恶性肿瘤。Y轴(IsMalignant)在0.5取值是一个阈值，y≥0.5的为一个类别，即恶性； y&lt;0.5为另外一个类别， 即良性。<br>如果我们用线性回归模型来解决这个分类问题，可以对这8个sample拟合出一条直线，如图粉红色的直线。<img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr1.png" alt="图1"> </p>
+<p>然而线性回归的鲁棒性很差，例如在图1.b的数据集上建立回归，因最右边噪点的存在，使回归模型在训练集上表现都很差。蓝色的直线将使得threshhold(x)=0.5阈值点右移，变得不再准确了。这主要是由于线性回归在整个实数域内敏感度一致，而分类范围，需要在[0,1]。<br><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr2.png" alt="图2"> </p>
+<p>对于二分类问题，需要得到的分类结果是y = 0 或 1, 而在线性回归模型中预测值h<sub>$\theta$</sub>(x)可以是大于1或是小于0的，所以分类问题在很多情况下不适合用线性回归。  而在逻辑回归模型中预测值h<sub>$\theta$</sub>(x)会被严格控制在[0,1]中，即 0 &lt;= h<sub>$\theta$</sub>(x) &lt;= 1，所以比线性回归更适合解决0-1分类问题。</p>
+<h3 id="u903B_u8F91_u56DE_u5F52_u7684_u8868_u8FBE_u5F0F"><a href="#u903B_u8F91_u56DE_u5F52_u7684_u8868_u8FBE_u5F0F" class="headerlink" title="逻辑回归的表达式"></a>逻辑回归的表达式</h3><p>逻辑回归是一个非线性模型，sigmoid函数，又称逻辑回归函数。但是它本质上又是一个线性回归模型，因为除去sigmoid映射函数关系，其它的步骤，算法都是线性回归的。可以说，逻辑回归，都是以线性回归为理论支持的。sigmoid方程也就是逻辑回归方程。  </p>
+<p>逻辑回归模型：<br><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr3.png" alt="图3"><br>其中$z = \theta^Tx$， 这个函数表达式能够使得这个函数的取值范围在(0,1)，所以满足我们之前对0-1分类问题的期待。</p>
+<p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr4.png" alt="图4">  </p>
+<h3 id="u7406_u89E3_u56DE_u5F52_u6A21_u578B_u7684_u8F93_u51FA"><a href="#u7406_u89E3_u56DE_u5F52_u6A21_u578B_u7684_u8F93_u51FA" class="headerlink" title="理解回归模型的输出"></a>理解回归模型的输出</h3><p>$h_\theta(x)$ = 在输入为x的情况下，y = 1的概率<br>$h_\theta(x)$ = P(y = 1 | x; $\theta$)  在给定x,参数为$\theta$的情况下，y = 1的概率。所以有，  </p>
+<p>P(y = 0 | x; $\theta$) + P(y = 1 | x; $\theta$) = 1<br>P(y = 0 | x; $\theta$) = 1 - P(y = 1 | x; $\theta$)</p>
+<p>也有，  </p>
+<p>P(Y=1|x) = $\frac{1}{1 + e^{-{\theta^Tx}}}$<br>P(Y=0|x) = 1 - $\frac{1}{1 + e^{-{\theta^Tx}}}$  = $\frac{e^{-{\theta^Tx}}}{1 + e^{-{\theta^Tx}}}$<br>逻辑回归比较连个条件概率值的大小，将实例x分到概率值较大的那一类。现在考察逻辑回归模型的特点。一个事件的几率odds是指该事件发生的概率与该事件不发生的概率的比值。如果事件发生的概率是p，那么该事件的几率是 p/(1-p)，该事件的对数几率(log odds)或logit函数是<br>$$<br>logit(p) = \frac{p}{1-p}<br>$$<br>所以，对逻辑回归而言，得，<br>$$<br>log\frac{P(Y=1|x)}{1-P(Y=1|x)} = \theta^Tx<br>$$<br>也就是说，在国际回归模型中，输出Y=1的对数几率是输入x的线性函数。</p>
+<h3 id="u6A21_u578B_u53C2_u6570_u4F30_u8BA1"><a href="#u6A21_u578B_u53C2_u6570_u4F30_u8BA1" class="headerlink" title="模型参数估计"></a>模型参数估计</h3><p>逻辑回归模型学习时，对于给定的训练数据集$T=\{(x_1,y_1),(x_2,y_2),…,(x_N,y_N)\}$，其中，$x_i \in R^n$，$y_i \in {0,1}$，可以应用极大似然估计法估计模型参数，从而得到逻辑回归模型。<br>设：$P(Y=1|x)=\pi(x)$,  $P(Y=0|x) = 1-\pi(x)$<br>似然函数为<br>$$<br>\prod_{i=1}^N [\pi(x_i)]^{y_i}[1-\pi(x_i)]^{1-y_i}<br>$$<br>对数似然函数为<br>$$<br>\begin{align}<br>L(\theta) &amp; = \sum_{i=1}^N [y_ilog\pi(x_i)+（1-y_i)log(1-\pi(x_i))]\\<br>     &amp; = \sum_{i=1}^N [y_ilog\frac{\pi(x_i)}{1-\pi(x_i)}+log(1-\pi(x_i))]\\<br>     &amp; = \sum_{i=1}^N [y_i(\theta^Tx_i) -log(1+e^{\theta^Tx_i})]<br>\end{align}<br>$$<br>对L($\theta$)求极大值，得到$\theta$的估计值。<br>这样，问题就变成了以对数似然函数为目标的最优化问题。逻辑回归中通常采用的方法是梯度下降法及牛顿法。<br>假设$\theta$的极大似然估计值是$\theta<em>$，那么学到的逻辑回归模型为：<br>$$<br>P(Y=1|x) = \frac{1}{1 + e^{-{\theta</em>^Tx}}}<br>$$<br>$$<br>P(Y=0|x) = \frac{e^{-{\theta<em>^Tx}}}{1 + e^{-{\theta</em>^Tx}}}<br>$$</p>
+<h3 id="u903B_u8F91_u56DE_u5F52_u7684_u51B3_u7B56_u8FB9_u754C"><a href="#u903B_u8F91_u56DE_u5F52_u7684_u51B3_u7B56_u8FB9_u754C" class="headerlink" title="逻辑回归的决策边界"></a>逻辑回归的决策边界</h3><p>$$<br>h_\theta(x) = g(\theta^Tx)<br>$$<br>$$<br>g(z) = \frac{1}{1 + e^{-z}}<br>$$</p>
+<p>假设预测 y = 1， 如果 $h_\theta(x)  \geq 0.5 $ ; $g(z) \geq 0.5$, when $z \geq 0$；所以$h_\theta(x) = g(\theta^Tx) \geq 0.5 $ When $\theta^Tx \geq 0$  </p>
+<p>预测 y = 0， 如果 $h_\theta(x) &lt; 0.5 $ ; $g(z) \leq 0.5$, when $z &lt; 0$；所以$h_\theta(x) = g(\theta^Tx) &lt; 0.5 $ When $\theta^Tx &lt; 0$  </p>
+<p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr5_2.png" alt="图5">  </p>
+<p>如上图中的粉红色直线就是<strong>decision boundary</strong>，可以看出来，分界线是与θ的特定的取值相关的。上图这个就是一个线性的decision boundary。而下图中这个就是非线性的decision boundary。</p>
+<p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr6.png" alt="图6">  </p>
+<h3 id="u903B_u8F91_u56DE_u5F52lost_function"><a href="#u903B_u8F91_u56DE_u5F52lost_function" class="headerlink" title="逻辑回归lost function"></a>逻辑回归lost function</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/12/27/logistic-regression/" data-id="ciipdby5q0009lks5k0rl7hvm" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/逻辑回归；分类问题/">逻辑回归；分类问题</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/12/27/supervised-learning/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">监督学习</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ror-mongoid-rails-api/">ror, mongoid, rails api</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/机器学习，-逻辑回归，-bias-variance/">机器学习， 逻辑回归， bias, variance</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/统计学习；监督学习/">统计学习；监督学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/逻辑回归；分类问题/">逻辑回归；分类问题</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ror-mongoid-rails-api/" style="font-size: 10px;">ror, mongoid, rails api</a> <a href="/tags/机器学习，-逻辑回归，-bias-variance/" style="font-size: 10px;">机器学习， 逻辑回归， bias, variance</a> <a href="/tags/统计学习；监督学习/" style="font-size: 10px;">统计学习；监督学习</a> <a href="/tags/逻辑回归；分类问题/" style="font-size: 10px;">逻辑回归；分类问题</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/12/27/logistic-regression/">逻辑回归</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/27/supervised-learning/">监督学习</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/19/ml-lr-vias-variance/">机器学习第一章--逻辑回归，Bias和Variance</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/14/my-new-post/">ror + mongoid开发初探</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 zephyrli<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>

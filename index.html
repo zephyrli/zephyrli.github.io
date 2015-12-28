@@ -65,6 +65,124 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-logistic-regression" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/27/logistic-regression/" class="article-date">
+  <time datetime="2015-12-27T10:07:17.000Z" itemprop="datePublished">2015-12-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/12/27/logistic-regression/">逻辑回归</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="u5206_u7C7B_u95EE_u9898"><a href="#u5206_u7C7B_u95EE_u9898" class="headerlink" title="分类问题"></a>分类问题</h2><p>例如：<br>Email: 是垃圾邮件 / 不是垃圾邮件?<br>在线交易: 欺诈网站 (是 / 不是)?<br>肿瘤: 恶性 / 良性 ?<br>这些是比较典型的二分类问题，也就是说结果可以表示为y，$y \in {0, 1} $<br>0: “Negative Class” (e.g., 良性肿瘤)<br>1: “Positive Class” (e.g., 恶性肿瘤)</p>
+<h3 id="u7EBF_u6027_u56DE_u5F52_u3001_u903B_u8F91_u56DE_u5F52_u4E0E_u5206_u7C7B_u95EE_u9898"><a href="#u7EBF_u6027_u56DE_u5F52_u3001_u903B_u8F91_u56DE_u5F52_u4E0E_u5206_u7C7B_u95EE_u9898" class="headerlink" title="线性回归、逻辑回归与分类问题"></a>线性回归、逻辑回归与分类问题</h3><p>使用Andrew NG讲义中的图，红色X表示的样本对，横坐标表示肿瘤的大小，纵坐标为观测值是否为恶性肿瘤。Y轴(IsMalignant)在0.5取值是一个阈值，y≥0.5的为一个类别，即恶性； y&lt;0.5为另外一个类别， 即良性。<br>如果我们用线性回归模型来解决这个分类问题，可以对这8个sample拟合出一条直线，如图粉红色的直线。<img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr1.png" alt="图1"> </p>
+<p>然而线性回归的鲁棒性很差，例如在图1.b的数据集上建立回归，因最右边噪点的存在，使回归模型在训练集上表现都很差。蓝色的直线将使得threshhold(x)=0.5阈值点右移，变得不再准确了。这主要是由于线性回归在整个实数域内敏感度一致，而分类范围，需要在[0,1]。<br><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr2.png" alt="图2"> </p>
+<p>对于二分类问题，需要得到的分类结果是y = 0 或 1, 而在线性回归模型中预测值h<sub>$\theta$</sub>(x)可以是大于1或是小于0的，所以分类问题在很多情况下不适合用线性回归。  而在逻辑回归模型中预测值h<sub>$\theta$</sub>(x)会被严格控制在[0,1]中，即 0 &lt;= h<sub>$\theta$</sub>(x) &lt;= 1，所以比线性回归更适合解决0-1分类问题。</p>
+<h3 id="u903B_u8F91_u56DE_u5F52_u7684_u8868_u8FBE_u5F0F"><a href="#u903B_u8F91_u56DE_u5F52_u7684_u8868_u8FBE_u5F0F" class="headerlink" title="逻辑回归的表达式"></a>逻辑回归的表达式</h3><p>逻辑回归是一个非线性模型，sigmoid函数，又称逻辑回归函数。但是它本质上又是一个线性回归模型，因为除去sigmoid映射函数关系，其它的步骤，算法都是线性回归的。可以说，逻辑回归，都是以线性回归为理论支持的。sigmoid方程也就是逻辑回归方程。  </p>
+<p>逻辑回归模型：<br><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr3.png" alt="图3"><br>其中$z = \theta^Tx$， 这个函数表达式能够使得这个函数的取值范围在(0,1)，所以满足我们之前对0-1分类问题的期待。</p>
+<p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr4.png" alt="图4">  </p>
+<h3 id="u7406_u89E3_u56DE_u5F52_u6A21_u578B_u7684_u8F93_u51FA"><a href="#u7406_u89E3_u56DE_u5F52_u6A21_u578B_u7684_u8F93_u51FA" class="headerlink" title="理解回归模型的输出"></a>理解回归模型的输出</h3><p>$h_\theta(x)$ = 在输入为x的情况下，y = 1的概率<br>$h_\theta(x)$ = P(y = 1 | x; $\theta$)  在给定x,参数为$\theta$的情况下，y = 1的概率。所以有，  </p>
+<p>P(y = 0 | x; $\theta$) + P(y = 1 | x; $\theta$) = 1<br>P(y = 0 | x; $\theta$) = 1 - P(y = 1 | x; $\theta$)</p>
+<p>也有，  </p>
+<p>P(Y=1|x) = $\frac{1}{1 + e^{-{\theta^Tx}}}$<br>P(Y=0|x) = 1 - $\frac{1}{1 + e^{-{\theta^Tx}}}$  = $\frac{e^{-{\theta^Tx}}}{1 + e^{-{\theta^Tx}}}$<br>逻辑回归比较连个条件概率值的大小，将实例x分到概率值较大的那一类。现在考察逻辑回归模型的特点。一个事件的几率odds是指该事件发生的概率与该事件不发生的概率的比值。如果事件发生的概率是p，那么该事件的几率是 p/(1-p)，该事件的对数几率(log odds)或logit函数是<br>$$<br>logit(p) = \frac{p}{1-p}<br>$$<br>所以，对逻辑回归而言，得，<br>$$<br>log\frac{P(Y=1|x)}{1-P(Y=1|x)} = \theta^Tx<br>$$<br>也就是说，在国际回归模型中，输出Y=1的对数几率是输入x的线性函数。</p>
+<h3 id="u6A21_u578B_u53C2_u6570_u4F30_u8BA1"><a href="#u6A21_u578B_u53C2_u6570_u4F30_u8BA1" class="headerlink" title="模型参数估计"></a>模型参数估计</h3><p>逻辑回归模型学习时，对于给定的训练数据集$T=\{(x_1,y_1),(x_2,y_2),…,(x_N,y_N)\}$，其中，$x_i \in R^n$，$y_i \in {0,1}$，可以应用极大似然估计法估计模型参数，从而得到逻辑回归模型。<br>设：$P(Y=1|x)=\pi(x)$,  $P(Y=0|x) = 1-\pi(x)$<br>似然函数为<br>$$<br>\prod_{i=1}^N [\pi(x_i)]^{y_i}[1-\pi(x_i)]^{1-y_i}<br>$$<br>对数似然函数为<br>$$<br>\begin{align}<br>L(\theta) &amp; = \sum_{i=1}^N [y_ilog\pi(x_i)+（1-y_i)log(1-\pi(x_i))]\\<br>     &amp; = \sum_{i=1}^N [y_ilog\frac{\pi(x_i)}{1-\pi(x_i)}+log(1-\pi(x_i))]\\<br>     &amp; = \sum_{i=1}^N [y_i(\theta^Tx_i) -log(1+e^{\theta^Tx_i})]<br>\end{align}<br>$$<br>对L($\theta$)求极大值，得到$\theta$的估计值。<br>这样，问题就变成了以对数似然函数为目标的最优化问题。逻辑回归中通常采用的方法是梯度下降法及牛顿法。<br>假设$\theta$的极大似然估计值是$\theta<em>$，那么学到的逻辑回归模型为：<br>$$<br>P(Y=1|x) = \frac{1}{1 + e^{-{\theta</em>^Tx}}}<br>$$<br>$$<br>P(Y=0|x) = \frac{e^{-{\theta<em>^Tx}}}{1 + e^{-{\theta</em>^Tx}}}<br>$$</p>
+<h3 id="u903B_u8F91_u56DE_u5F52_u7684_u51B3_u7B56_u8FB9_u754C"><a href="#u903B_u8F91_u56DE_u5F52_u7684_u51B3_u7B56_u8FB9_u754C" class="headerlink" title="逻辑回归的决策边界"></a>逻辑回归的决策边界</h3><p>$$<br>h_\theta(x) = g(\theta^Tx)<br>$$<br>$$<br>g(z) = \frac{1}{1 + e^{-z}}<br>$$</p>
+<p>假设预测 y = 1， 如果 $h_\theta(x)  \geq 0.5 $ ; $g(z) \geq 0.5$, when $z \geq 0$；所以$h_\theta(x) = g(\theta^Tx) \geq 0.5 $ When $\theta^Tx \geq 0$  </p>
+<p>预测 y = 0， 如果 $h_\theta(x) &lt; 0.5 $ ; $g(z) \leq 0.5$, when $z &lt; 0$；所以$h_\theta(x) = g(\theta^Tx) &lt; 0.5 $ When $\theta^Tx &lt; 0$  </p>
+<p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr5_2.png" alt="图5">  </p>
+<p>如上图中的粉红色直线就是<strong>decision boundary</strong>，可以看出来，分界线是与θ的特定的取值相关的。上图这个就是一个线性的decision boundary。而下图中这个就是非线性的decision boundary。</p>
+<p><img src="https://raw.githubusercontent.com/zephyrli/pics/master/lr6.png" alt="图6">  </p>
+<h3 id="u903B_u8F91_u56DE_u5F52lost_function"><a href="#u903B_u8F91_u56DE_u5F52lost_function" class="headerlink" title="逻辑回归lost function"></a>逻辑回归lost function</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/12/27/logistic-regression/" data-id="ciipdby5q0009lks5k0rl7hvm" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/逻辑回归；分类问题/">逻辑回归；分类问题</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-supervised-learning" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/27/supervised-learning/" class="article-date">
+  <time datetime="2015-12-27T09:05:17.000Z" itemprop="datePublished">2015-12-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/12/27/supervised-learning/">监督学习</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="u7EDF_u8BA1_u5B66_u4E60"><a href="#u7EDF_u8BA1_u5B66_u4E60" class="headerlink" title="统计学习"></a>统计学习</h2><h3 id="u7EDF_u8BA1_u5B66_u4E60_u7684_u5BF9_u8C61"><a href="#u7EDF_u8BA1_u5B66_u4E60_u7684_u5BF9_u8C61" class="headerlink" title="统计学习的对象"></a>统计学习的对象</h3><p>统计学习的对象是数据（data)，它从数据出发，提取数据的特征，抽象出数据的模型，发现数据中的知识，又回到对数据的分析与预测中去。统计学习关于数据的基本假设是同类数据具有一定的<strong>统计规律性</strong>。这里的同类数据指的是具有某种共同性质的数据，例如英文文章，互联网网页，数据库中的数据等。由于它们具有统计的规律性，所以可以用概率统计的方法来加以处理。比如，可以用随机变量描述数据中的特征，用概率分布描述数据的统计规律。</p>
+<h3 id="u7EDF_u8BA1_u5B66_u4E60_u7684_u76EE_u7684"><a href="#u7EDF_u8BA1_u5B66_u4E60_u7684_u76EE_u7684" class="headerlink" title="统计学习的目的"></a>统计学习的目的</h3><p>统计学习对于数据进行预测与分析，特别是对未知新数据进行预测与分析。对数据的预测与分析是通过构建概率统计模型实现的。统计学习总的目标就是考虑学习什么样的模型和如何学习模型，以使得模型更能对数据进行准确的预测与分析。</p>
+<h3 id="u7EDF_u8BA1_u5B66_u4E60_u7684_u65B9_u6CD5"><a href="#u7EDF_u8BA1_u5B66_u4E60_u7684_u65B9_u6CD5" class="headerlink" title="统计学习的方法"></a>统计学习的方法</h3><p>统计学习由监督学习（supervised learning)、非监督学习（unsupervised learning)、半监督学习（semi-supervised learning)和强化学习（reinforcement learning)。<br>简单的理解可以任务监督学习是labeled学习，就是在训练集上结果的正确性是可以直接判断的；而非监督学习是训练集上结果也无法直接判断正确性，只能通过自定义指标的方式来判断结果的好坏；半监督学习可以理解为是missing labeled。</p>
+<p>这一节主要讨论监督学习。监督学习的方法可以概括如下：从给定的、有限的、用于学习的训练数据（training data)集合触发，假设数据是独立同分布产生的；并且假设要学习的模型属于某个函数的集合，称为假设空间(hypothesis space)；应用于某个评价准则(evaluation criterion)，从假设空间中选取一个最优的模型，使它对已知训练数据及未知测试数据(test data)在给定的评价准则下有最优的预测；最优模型的选取由算法实现。这样，统计学习方法包括模型的假设空间、模型的选择准则以及模型学习的算法，称为统计学习方法的三要素，简称为模型（model)，策略（strategy)和算法（algorithm)。</p>
+<p>实现统计学习方法的步骤如下:  </p>
+<ol>
+<li>得到一个有限的训练数据集合；</li>
+<li>确定包含所有可能的模型的假设空间，即学习模型的集合；</li>
+<li>确定模型选择的准则，即学习的策略；</li>
+<li>实现求解最优模型的算法，即学习的算法；</li>
+<li>通过学习方法选择最优模型；</li>
+<li>利用学习的最优模型对新数据进行预测或分析。</li>
+</ol>
+<h2 id="u76D1_u7763_u5B66_u4E60"><a href="#u76D1_u7763_u5B66_u4E60" class="headerlink" title="监督学习"></a>监督学习</h2><p>监督学习的任务是学习一个模型，使模型能够对任意给定的输入，对其相应的输出做出一个好的预测（这里的输入输出指的是某个系统的输入输出，而不是学习的输入输出）。所以监督学习是统计学习很重要的分支。</p>
+<h3 id="u8F93_u5165_u7A7A_u95F4_u3001_u7279_u5F81_u7A7A_u95F4_u4E0E_u8F93_u51FA_u7A7A_u95F4"><a href="#u8F93_u5165_u7A7A_u95F4_u3001_u7279_u5F81_u7A7A_u95F4_u4E0E_u8F93_u51FA_u7A7A_u95F4" class="headerlink" title="输入空间、特征空间与输出空间"></a>输入空间、特征空间与输出空间</h3><p>在监督学习中，将输入与输出所有可能取值的集合分别称为输入空间（input space）和输出空间（output space)。  </p>
+<p>每一个具体的输入是一个实例（instance)，通常由特征向量（feature vector)表示。所有特征向量存在的空间被称为特征空间（feature space)，特征空间的每一维对应于一个特征。在我们下面的描述里，输入实例x的特征向量记作</p>
+<p>x = (x<sup>(1)</sup>， x<sup>(2)</sup>， x<sup>(3)</sup>， … ， ， x<sup>(n)</sup>）<sup>T</sup></p>
+<p>x<sup>(i)</sup>表示x的第i个特征。而需要注意的是，x<sub>i</sub>则表示多个输入变量中的第i个，即</p>
+<p>x<sub>i</sub> = (x<sub>i</sub><sup>(1)</sup>， x<sub>i</sub><sup>(2)</sup>， x<sub>i</sub><sup>(3)</sup>， … ， ， x<sub>i</sub><sup>(n)</sup>）<sup>T</sup></p>
+<p>训练数据由输入与输出数据对组成，训练集通常表示为</p>
+<p>T = {(x<sub>1</sub>, y<sub>1</sub>)，(x<sub>2</sub>, y<sub>2</sub>)，… ， (x<sub>n</sub>, y<sub>n</sub>)}</p>
+<p>输入与输出对又称为样本（sample）或样本点。</p>
+<p>输入变量X与输出变量Y有不同的类型，可以是连续的，也可以是离散的。人们根据输入输出变量的不同类型，对预测任务给与不同的名称：输入变量与输出变量均为连续变量的预测问题称为<strong>回归问题</strong>；输出变量为有限个离散变量的预测问题称为<strong>分类问题</strong>；输入变量与输出变量均为变量序列的预测问题称为标注问题。</p>
+<h2 id="u5206_u7C7B_u95EE_u9898"><a href="#u5206_u7C7B_u95EE_u9898" class="headerlink" title="分类问题"></a>分类问题</h2><p>监督学习从数据中学习一个分类模型或分类决策函数，称为分类器（classifier）。分类器对新的输入进行输出的预测（prediction)，成为分类(classification)。可能的输出称为类(class)。分类问题有多分类问题，二分类问题等。分类问题包括学习和分类两个过程。<br>评价分类器的性能指标一般是分类的准确率（accuracy)，其定义是，对于给定的测试数据集，分类器正确分类的样本数与总样本数之比。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/12/27/supervised-learning/" data-id="ciipdby4i0000lks50zggfpo6" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/统计学习；监督学习/">统计学习；监督学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-ml-lr-vias-variance" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/12/19/ml-lr-vias-variance/" class="article-date">
@@ -130,7 +248,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/19/ml-lr-vias-variance/" data-id="ciifdjmaf00033ss5huxhe4uj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/19/ml-lr-vias-variance/" data-id="ciipdby5m0006lks53k5r01nl" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/机器学习，-逻辑回归，-bias-variance/">机器学习， 逻辑回归， bias, variance</a></li></ul>
@@ -229,7 +347,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/14/my-new-post/" data-id="ciifdjm9y00003ss5jr3bn9gg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/14/my-new-post/" data-id="ciipdby5b0003lks5eveppolh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ror-mongoid-rails-api/">ror, mongoid, rails api</a></li></ul>
@@ -252,7 +370,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ror-mongoid-rails-api/">ror, mongoid, rails api</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/机器学习，-逻辑回归，-bias-variance/">机器学习， 逻辑回归， bias, variance</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ror-mongoid-rails-api/">ror, mongoid, rails api</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/机器学习，-逻辑回归，-bias-variance/">机器学习， 逻辑回归， bias, variance</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/统计学习；监督学习/">统计学习；监督学习</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/逻辑回归；分类问题/">逻辑回归；分类问题</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -261,7 +379,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/ror-mongoid-rails-api/" style="font-size: 10px;">ror, mongoid, rails api</a> <a href="/tags/机器学习，-逻辑回归，-bias-variance/" style="font-size: 10px;">机器学习， 逻辑回归， bias, variance</a>
+      <a href="/tags/ror-mongoid-rails-api/" style="font-size: 10px;">ror, mongoid, rails api</a> <a href="/tags/机器学习，-逻辑回归，-bias-variance/" style="font-size: 10px;">机器学习， 逻辑回归， bias, variance</a> <a href="/tags/统计学习；监督学习/" style="font-size: 10px;">统计学习；监督学习</a> <a href="/tags/逻辑回归；分类问题/" style="font-size: 10px;">逻辑回归；分类问题</a>
     </div>
   </div>
 
@@ -270,7 +388,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">十二月 2015</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -280,6 +398,14 @@
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2015/12/27/logistic-regression/">逻辑回归</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/27/supervised-learning/">监督学习</a>
+          </li>
         
           <li>
             <a href="/2015/12/19/ml-lr-vias-variance/">机器学习第一章--逻辑回归，Bias和Variance</a>
@@ -326,5 +452,35 @@
 <script src="/js/script.js" type="text/javascript"></script>
 
   </div>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 </body>
 </html>
